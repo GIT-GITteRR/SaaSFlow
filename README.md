@@ -1,254 +1,225 @@
-SaaSFlow
+# SaaSFlow
 
-A Universal API Gateway & Metered Billing Console
+**A Universal API Gateway & Metered Billing Console (Simulation)**
 
-SaaSFlow is a simulated API gateway and metered billing platform designed to demonstrate how enterprise systems manage API traffic, enforce rate limits, and automate usage-based billing while prioritizing data privacy.
+SaaSFlow is a client-side simulated API gateway that demonstrates how enterprise platforms manage API traffic, enforce rate limits, and automate metered billing, all while strictly maintaining data privacy.
 
-Whether a company provides financial market data, e-commerce services, or AI model APIs, SaaSFlow demonstrates how an intermediary gateway can help protect backend infrastructure, monitor consumption, and monetize API access.
+Whether a company is serving live financial tickers, e-commerce data, or AI models, SaaSFlow provides the infrastructure to monetize and protect those endpoints. This project was built by Neel Raj and Divyanshu Baghel for the PST_PD_004 OJT Track.
 
-This project was built by Neel Raj and Divyanshu Baghel for the PST_PD_004 OJT Track.
+---
 
-⚠️ The Problem: Unmanaged API Infrastructure
+## ⚠️ The Problem: Unmanaged API Infrastructure
 
-APIs are the backbone of the modern internet. However, exposing an API without a protective layer introduces several risks:
+APIs are the backbone of the modern internet. However, exposing an API without a protective layer introduces massive risks:
 
-Infrastructure Vulnerability: A buggy script or malicious client can send excessive requests, potentially overwhelming backend servers and degrading service availability.
+1. **Infrastructure Vulnerability:** A single buggy script from a client can send thousands of requests per second, instantly crashing the provider's backend servers.
+2. **Revenue Leakage:** Providers lack built-in tools to precisely meter API usage, making it nearly impossible to confidently charge customers for what they consume.
+3. **Access Chaos:** Managing authentication, issuing API keys, and enforcing plan-specific quotas (e.g., Free vs. Pro tiers) becomes a logistical nightmare as the user base grows.
 
-Revenue Leakage: Providers need reliable usage metering to calculate consumption and charge customers accurately.
+---
 
-Access Chaos: Managing authentication, API keys, and plan-specific quotas, such as Free and Pro tiers, becomes increasingly difficult as a customer base grows.
+## 💡 The SaaSFlow Solution
 
-💡 The SaaSFlow Solution
+SaaSFlow acts as a smart, universal "toll booth" sitting between external developers and a company's backend infrastructure. It standardizes the API lifecycle:
 
-SaaSFlow acts as a smart, universal API gateway, functioning like a digital toll booth between external developers and protected backend services. It standardizes API access, usage tracking, and billing through the following components:
+- **The Bouncer (Authentication):** Intercepts requests and validates masked API keys before traffic ever touches the core servers.
+- **The Speed Limit (Rate Limiting):** Enforces strict, plan-based RPM (Requests Per Minute) limits in real-time. If a client exceeds their quota, SaaSFlow instantly blocks them with a `429 Too Many Requests` error, protecting backend uptime.
+- **The Cashier (Metered Billing):** Tracks every byte of data passing through the gateway, automatically aggregating usage to generate transparent, Stripe-style invoices at the end of the month.
 
-The Bouncer (Authentication): Validates API keys and verifies that requests belong to authorized customers before allowing access to protected resources.
+---
 
-The Speed Limit (Rate Limiting): Enforces plan-based Requests Per Minute (RPM) limits. When a client exceeds the permitted rate, the gateway can return a 429 Too Many Requests response, protecting backend availability.
+## ✨ Core Features
 
-The Cashier (Metered Billing): Records API usage, aggregates consumption by customer, and calculates subscription fees and overage charges for transparent monthly invoices.
+- **🔀 Universal API Routing:** A dynamic Playground where consumers can simulate sending requests through the gateway and viewing the simulated response and data consumption.
+- **🚦 In-Browser Rate Limiting:** Tracks API keys and enforces subscription limits (e.g., 20 requests/min). Exceeding the limit triggers a dynamic `429` block with a live countdown timer.
+- **💳 Automated Billing Engine:** Automatically tracks usage per tenant, calculating base subscription fees plus Rupee (₹) overage charges for the monthly invoice.
+- **🛡️ Zero-Inspection Privacy:** The system architecture is designed to log only operational metadata (latency, status codes, data cost) while completely discarding the actual payload strings.
+- **👥 Role-Based Access (RBAC):** Three distinct views:
+  - **Founder:** High-level KPI dashboard (Total Calls, Blocked 429s, Active MRR).
+  - **API Consumer:** Developer playground and virtual key management.
+  - **Finance:** Itemized usage tracking and invoice settlement.
 
-The Privacy Guard (Metadata-Only Logging): Records operational information such as timestamps, latency, status codes, and usage costs without retaining request or response payload contents.
+---
 
-✨ Core Features
+## 🛠️ Tech Stack (Phase 1: Simulation)
 
-🔀 Universal API Routing: A developer playground that simulates sending requests through the gateway and displays the response, latency, status code, and estimated data consumption.
+Because this project demonstrates architectural logic without requiring real backend deployment, the entire gateway engine runs directly in the browser:
 
-🚦 Rate Limiting: Tracks API usage by key and enforces subscription-specific limits, such as 20 requests per minute. Exceeding a limit triggers a 429 response and a countdown until requests are permitted again.
+- **UI/Styling:** HTML5, CSS3, Bootstrap 5.3
+- **Core Logic:** Vanilla JavaScript (ES6)
+- **Database Simulation:** Browser `localStorage` (JSON seeding)
+- **Routing Engine:** JS Promises & `setTimeout` to mimic network latency.
 
-💳 Metered Billing Engine: Aggregates usage by customer and calculates invoices using base subscription fees and configurable rupee-denominated overage rates.
+---
 
-🛡️ Privacy-Focused Logging: Stores operational metadata rather than actual payload strings, reducing the amount of potentially sensitive information retained.
+## 🆕 Backend Technology Stack (Planned Phase 2)
 
-👥 Role-Based Access Control (RBAC): Provides three distinct interfaces:
+The planned second phase will extend SaaSFlow beyond its browser-based simulation by introducing a backend server and a persistent database.
 
-Founder: High-level KPIs, including total API calls, blocked requests, active Monthly Recurring Revenue (MRR), and system usage.
+### 1. Node.js
 
-API Consumer: Developer playground, project management, virtual API key management, and usage analytics.
+Node.js will provide the runtime environment for executing JavaScript on the backend, outside the browser.
 
-Finance: Itemized usage reports, invoice calculations, payment status, and billing history.
+**Its role in SaaSFlow:**
+- Run the backend server.
+- Execute API request-processing and business logic.
+- Handle asynchronous operations and communication with external API providers.
+- Coordinate database operations and other backend services.
 
-🛠️ Technology Stack and Architecture
+### 2. Express.js
 
-SaaSFlow is planned in two development phases: a browser-based simulation and a backend-enabled implementation.
+Express.js is a web framework built on Node.js that simplifies the development of web servers, API endpoints, and middleware.
 
-Phase 1: Frontend Simulation
+**Its role in SaaSFlow:**
+- **API Routing:** Create endpoints for projects, API keys, usage statistics, and billing.
+- **Authentication:** Validate API keys and identify the associated customer.
+- **Rate Limiting:** Enforce plan-specific request limits and return `429 Too Many Requests` when limits are exceeded.
+- **Usage Tracking:** Record operational metadata such as timestamps, response times, and HTTP status codes.
+- **Billing:** Calculate subscription fees and usage-based overage charges.
+- **Access Control:** Restrict Founder, API Consumer, and Finance operations according to user permissions.
+- **Error Handling:** Return appropriate HTTP status codes and error messages.
 
-The initial version demonstrates the core gateway and billing concepts directly in the browser without requiring a deployed backend.
+Express.js will act as the main API layer connecting the frontend, database, and external services.
 
-HTML5: Defines the application structure, including login screens, dashboards, tables, and forms.
+### 3. MongoDB
 
-CSS3: Provides custom styling, layouts, and visual presentation.
+MongoDB is a document-oriented NoSQL database that stores data in flexible, JSON-like BSON documents.
 
-Bootstrap 5.3: Supplies responsive UI components and a consistent design system.
+Unlike browser `localStorage`, MongoDB will allow SaaSFlow to persist shared data across users, browsers, and devices.
 
-Vanilla JavaScript (ES6): Implements frontend interactions, simulated routing, rate-limit calculations, billing logic, and dashboard updates.
+**Its role in SaaSFlow:**
+- **Tenant Management:** Store customer accounts and organization details.
+- **API Key Management:** Store securely represented API-key credentials, project associations, and key status.
+- **Subscription Plans:** Store plan limits, subscription prices, and overage rates.
+- **Usage Logs:** Persist request metadata for usage tracking and analytics.
+- **Billing Records:** Store invoice details, aggregated usage, calculated charges, and payment status.
+- **Dashboard Analytics:** Provide persistent data for total API calls, blocked requests, usage trends, and billing summaries.
 
-Browser localStorage: Persists simulated application state and sample records between browser sessions.
+Express.js will communicate with MongoDB through a MongoDB driver or an optional library such as Mongoose.
 
-JSON Seed Data: Supplies initial demonstration tenants, subscription plans, and other sample records.
+---
 
-JavaScript Promises and setTimeout: Mimic network delays and asynchronous API responses for demonstration purposes.
+## 🔄 Planned Backend Workflow
 
-Phase 2: Backend and Database Integration
+The backend-enabled version will process API requests through the following workflow:
 
-The next phase introduces a real backend using Node.js, Express.js, and MongoDB. This transforms SaaSFlow from a browser-only simulation into a server-backed application capable of managing persistent records and processing API requests.
+1. **Receive Request:** The Express.js server receives an incoming API request.
+2. **Authenticate:** The backend validates the API key and identifies the associated tenant and project.
+3. **Check Rate Limits:** The rate-limiting logic checks the customer's plan and current request usage.
+4. **Forward Request:** If the request is authorized and permitted, the gateway forwards it to the configured external API or protected service.
+5. **Record Usage:** SaaSFlow records operational metadata, including timestamps, response status, latency, and billable usage.
+6. **Store Data:** MongoDB persists the relevant usage records and billing information.
+7. **Return Response:** The gateway returns the response to the client, while the dashboard retrieves updated statistics through the backend API.
 
-1. Node.js: Backend Runtime
+Requests rejected by authentication or rate limiting will also be handled appropriately, with sensitive information excluded from operational logs.
 
-Node.js provides the runtime environment for executing JavaScript outside the browser. It allows SaaSFlow to run its backend code, communicate with the database, and handle incoming network requests.
+---
 
-Functions in SaaSFlow:
+## 📂 Folder Structure
 
-Runs the Express.js server.
+### Existing Frontend Simulation
 
-Executes authentication, request-processing, rate-limiting, and billing logic.
-
-Coordinates database operations and communication with external API providers.
-
-Handles asynchronous operations such as network calls and database queries.
-
-2. Express.js: Backend Framework and API Layer
-
-Express.js is a web framework built on Node.js. It simplifies the creation of HTTP servers, API endpoints, and middleware used to process incoming requests.
-
-Functions in SaaSFlow:
-
-API Routing: Defines endpoints such as GET /api/usage, POST /api/projects, and POST /api/keys.
-
-Authentication Middleware: Validates API credentials and identifies the associated customer or project.
-
-Rate Limiting: Checks request counts against configured subscription limits and rejects excess traffic with HTTP 429.
-
-Usage Metering: Records request metadata, including timestamps, response status, latency, and billable usage.
-
-Billing Calculations: Aggregates usage records and calculates subscription fees and overage charges.
-
-Access Control: Enforces permissions so Founder, API Consumer, and Finance users can access only the features and data they are authorized to use.
-
-Error Handling: Returns consistent HTTP status codes and error responses when requests fail.
-
-Express.js will act as the primary communication layer between the frontend, MongoDB, and any protected API services connected through the gateway.
-
-3. MongoDB: Persistent Database
-
-MongoDB is a document-oriented NoSQL database that stores application data in flexible, JSON-like BSON documents. Unlike browser localStorage, MongoDB allows the backend to maintain shared, persistent records across users, browsers, and devices.
-
-Functions in SaaSFlow:
-
-Tenant Management: Stores customer accounts, organization details, and account settings.
-
-API Key Management: Stores securely represented API-key credentials, their associated projects, status, and permissions.
-
-Subscription Plans: Stores plan configurations, request limits, subscription prices, and overage rates.
-
-Usage Logs: Stores operational metadata for API requests without retaining actual request or response payloads.
-
-Billing Records: Stores aggregated usage, invoice line items, calculated charges, and payment status.
-
-Analytics: Supplies data for dashboard KPIs, usage trends, blocked-request counts, and customer-level reports.
-
-MongoDB will serve as the central source of truth for persistent application data. Express.js will access it through a MongoDB driver or an optional object modeling library such as Mongoose.
-
-4. How the Backend Components Work Together
-
-When a customer sends an API request through SaaSFlow, the planned backend workflow is:
-
-The request reaches the Express.js server running on Node.js.
-
-Authentication middleware validates the customer's API key and identifies the associated tenant and project.
-
-The rate-limiting layer checks the applicable plan limits and recent request counts.
-
-If the request is allowed, the gateway forwards it to the configured upstream API, where applicable.
-
-The gateway receives the response and records operational metadata, including status code, latency, and billable usage.
-
-MongoDB stores the relevant usage records and updates the data used for analytics and billing.
-
-The response is returned to the customer, and the dashboard can retrieve updated statistics from the backend.
-
-Requests rejected during authentication or rate limiting should also be logged appropriately, without exposing credentials or sensitive payloads.
-
-5. Proposed Backend Architecture
-
+```text
 SaaSFlow/
-├── frontend/
-│   ├── index.html
-│   ├── dashboard.html
-│   ├── css/
-│   │   └── styles.css
-│   └── js/
-│       └── app.js
-│
-└── backend/
-    ├── server.js
-    ├── routes/
-    │   ├── authRoutes.js
-    │   ├── projectRoutes.js
-    │   ├── apiKeyRoutes.js
-    │   ├── usageRoutes.js
-    │   └── billingRoutes.js
-    ├── middleware/
-    │   ├── authenticate.js
-    │   ├── authorize.js
-    │   └── rateLimiter.js
-    ├── models/
-    │   ├── User.js
-    │   ├── Project.js
-    │   ├── ApiKey.js
-    │   ├── UsageLog.js
-    │   └── Invoice.js
-    ├── services/
-    │   ├── gatewayService.js
-    │   ├── usageService.js
-    │   └── billingService.js
-    ├── config/
-    │   └── database.js
-    └── .env
+├── index.html          # Main login/entry point
+├── dashboard.html      # The core UI wrapper for all roles
+├── css/
+│   └── styles.css      # Custom styling overrides for Bootstrap
+├── js/
+│   ├── gateway.js      # The simulated API routing engine & fake delays
+│   ├── rateLimiter.js  # Math logic for fixed-window rate limiting
+│   ├── billing.js      # Data-to-Rupee math calculations
+│   └── app.js          # UI state management and DOM manipulation
+└── data/
+    ├── tenants.json    # Seed data for companies (ShopKart, Zomato, etc.)
+    └── plans.json      # Subscription tier definitions
+```
 
-This is a proposed structure for the backend-enabled version. The files and modules will be introduced as the project develops.
+### Proposed Backend Structure (Phase 2)
 
-🔐 Security and Privacy Considerations
+```text
+backend/
+├── server.js                 # Express server entry point
+├── routes/
+│   ├── authRoutes.js         # Authentication endpoints
+│   ├── projectRoutes.js      # Project management endpoints
+│   ├── apiKeyRoutes.js       # API key management endpoints
+│   ├── usageRoutes.js        # Usage tracking and analytics endpoints
+│   └── billingRoutes.js      # Billing and invoice endpoints
+├── middleware/
+│   ├── authenticate.js       # API key and user authentication
+│   ├── authorize.js          # Role-based access control
+│   └── rateLimiter.js        # Request rate-limiting logic
+├── models/
+│   ├── User.js               # User records
+│   ├── Project.js            # Project records
+│   ├── ApiKey.js             # API key records
+│   ├── UsageLog.js           # API usage metadata
+│   └── Invoice.js            # Billing and invoice records
+├── services/
+│   ├── gatewayService.js     # API gateway processing
+│   ├── usageService.js       # Usage aggregation
+│   └── billingService.js     # Billing calculations
+├── config/
+│   └── database.js           # MongoDB connection configuration
+├── .env                      # Local environment variables
+├── .gitignore                # Files excluded from version control
+└── package.json              # Backend dependencies and scripts
+```
 
-The backend implementation will incorporate security measures appropriate for an API gateway:
+*Note: The backend structure above is proposed for Phase 2. The modules will be implemented as backend development progresses.*
 
-API keys will be generated securely, displayed carefully, and stored using a design that avoids retaining recoverable plaintext secrets.
+---
 
-Authentication and authorization checks will run on the server rather than relying on frontend role selections.
+## 🔐 Backend Security and Privacy (Planned)
 
-Database credentials, signing secrets, and other sensitive configuration will be kept in environment variables rather than committed to source control.
+The backend implementation will introduce additional security measures:
 
-Request and response payloads will not be retained by the usage-logging system. Credentials, authorization headers, and sensitive query parameters must also be excluded from logs.
+- **Secure API Keys:** Generate keys securely, reveal secret values only when appropriate, and avoid storing recoverable plaintext API-key secrets.
+- **Server-Side Authentication:** Validate credentials and enforce permissions on the backend instead of trusting frontend state.
+- **Environment Variables:** Keep database connection strings, secrets, and other sensitive configuration out of source control.
+- **Privacy-Focused Logging:** Exclude request and response payloads, API keys, authorization headers, and other sensitive information from operational logs.
+- **Server-Side Rate Limiting:** Enforce usage limits on the backend rather than relying on browser-only counters.
+- **Reliable Billing:** Calculate charges from trusted server-side usage records and configured pricing rules.
 
-Rate limiting will be enforced server-side using a shared or distributed store when required for multi-instance deployments.
+---
 
-Billing calculations will use trusted server-side usage records and consistent pricing rules.
+## 💻 How to Run Locally
 
-External API calls will use configured destinations and appropriate safeguards against unauthorized forwarding and server-side request forgery.
+Since this is a client-side simulation, there are no heavy servers or databases to spin up.
 
-💻 How to Run Locally
+1. **Clone the repository:**
 
-Phase 1: Frontend Simulation
+   ```bash
+   git clone https://github.com/YourUsername/SaaSFlow.git
+   ```
 
-Clone the repository:
+2. **Navigate to the folder:**
 
-git clone https://github.com/YourUsername/SaaSFlow.git
+   ```bash
+   cd SaaSFlow
+   ```
 
-Navigate to the project directory:
+3. **Run the app:**
 
-cd SaaSFlow
+   Simply double-click `index.html` to open it in your web browser, or use a tool like VS Code Live Server for hot reloading.
 
-Open index.html in a browser or use VS Code Live Server.
+---
 
-The simulated version does not require Node.js, Express.js, or MongoDB to run.
+## ⚙️ Running the Planned Backend (Phase 2)
 
-Phase 2: Backend-Enabled Version
+Once the backend has been implemented, the following setup process will apply:
 
-After the backend has been implemented:
+1. **Install Node.js:** Install Node.js and npm on your development machine.
+2. **Navigate to the Backend:** Open a terminal in the `backend/` directory.
+3. **Install Dependencies:** Run `npm install` after the backend's `package.json` has been configured.
+4. **Configure MongoDB:** Set up a local MongoDB instance or a hosted MongoDB database and configure the connection string in your local `.env` file.
+5. **Start the Server:** Run the configured npm start script or the backend entry point to launch the Express.js server.
+6. **Connect the Frontend:** Configure the frontend to communicate with the backend API instead of relying exclusively on browser `localStorage`.
+7. **Test the Features:** Verify authentication, API routing, rate limiting, usage recording, and billing calculations.
 
-Install Node.js and npm.
+*These instructions describe the planned backend setup. The backend must be implemented and configured before these steps can be used successfully.*
 
-Navigate to the backend directory.
+---
 
-Install the project's dependencies using npm install.
-
-Configure the MongoDB connection string and other secrets in a local .env file.
-
-Start the Express.js server using the configured npm script or Node.js entry point.
-
-Configure the frontend to communicate with the backend API.
-
-Test authentication, rate limiting, usage recording, and billing calculations.
-
-MongoDB must be available locally or through a configured hosted database. The exact commands will depend on the final implementation.
-
-🚀 Project Vision
-
-SaaSFlow aims to demonstrate how an API gateway can combine traffic control, customer access management, usage analytics, and metered billing in one platform.
-
-The first phase validates the core business logic through a browser simulation. The planned second phase introduces a Node.js and Express.js backend with MongoDB persistence, enabling more realistic request processing, centralized usage tracking, and a foundation for future deployment.
-
-Built with 💡 in Bengaluru, India.
-
-Project contributors: Neel Raj and Divyanshu Baghel | PST_PD_004 OJT Track
+*Built with 💡 in Bengaluru, India.*
