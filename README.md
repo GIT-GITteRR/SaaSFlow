@@ -74,12 +74,4 @@ Since this is a client-side simulation, there are no heavy servers or databases 
 3. **Run the app:**
    Simply double-click `index.html` to open it in your web browser, or use a tool like VS Code Live Server for hot reloading.
 
-## 🔮 Future Roadmap (Phase 2)
-
-Post-evaluation, the goal is to migrate this frontend simulation into a true production-ready stack:
-
-* **Backend:** Node.js + Express.js API proxy.
-* **Cache:** Upstash Redis for 2ms rate limiting.
-* **Database:** PostgreSQL + Prisma ORM for relational billing data.
-
 *Built with 💡 in Bengaluru, India.*
